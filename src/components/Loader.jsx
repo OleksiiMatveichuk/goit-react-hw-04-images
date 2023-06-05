@@ -6,7 +6,7 @@ export const Loader = () => {
       <Audio
         height="80"
         width="80"
-        radius="9"
+        radius="10"
         color="green"
         ariaLabel="loading"
       />
