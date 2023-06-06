@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
 import { Searchbar } from './Searchbar';
 import { ImageGallery } from './ImageGallery';
 import { ImageGalleryItem } from './ImageGalleryItem';
@@ -7,74 +7,96 @@ import { Button } from './Button';
 import { Modal } from './Modal';
 import { getImages } from 'service/imageAPI';
 
-export class App extends Component {
-  state = {
-    queri: '',
-    page: 1,
-    photos: [],
-    showBtn: false,
-    isEmpty: false,
-    error: '',
-    isLoading: false,
-    imageURL: '',
-  };
+export const App = () => {
+  // state = {
+  //   queri: '',
+  //   page: 1,
+  //   photos: [],
+  //   showBtn: false,
+  //   isEmpty: false,
+  //   error: '',
+  //   isLoading: false,
+  //   imageURL: '',
+  // };
+  const [queri, setQueri] = useState('');
+  const [page, setPage] = useState(1);
+  const [photos, setPhotos] = useState([]);
+  const [showBtn, setShowBtn] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(false);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [imageURL, setImageURL] = useState('');
 
-  async componentDidUpdate(_, prevState) {
-    const { queri, page } = this.state;
-    if (prevState.queri !== queri || prevState.page !== page) {
-      this.setState({ isLoading: true });
+  // async componentDidUpdate(_, prevState) {
+  //   const { queri, page } = this.state;
+  //   if (prevState.queri !== queri || prevState.page !== page) {
+  //     this.setState({ isLoading: true });
+  //     try {
+  //       const { hits, totalHits } = await getImages(queri, page);
+
+  //       this.setState(prev => ({
+  //         photos: [...prev.photos, ...hits],
+  //         showBtn: page < Math.ceil(totalHits / 15),
+  //       }));
+  //     } catch (err) {
+  //       this.setState({ error: err.message });
+  //     } finally {
+  //       this.setState({ isLoading: false });
+  //     }
+  //   }
+  // }
+
+  useEffect(() => {
+    if (!queri) {
+      return;
+    }
+    setIsLoading(true);
+    const fetchImages = async () => {
       try {
+        // const apiPhotos = await getImages(queri, page);
         const { hits, totalHits } = await getImages(queri, page);
 
-        this.setState(prev => ({
-          photos: [...prev.photos, ...hits],
-          showBtn: page < Math.ceil(totalHits / 15),
-        }));
+        setPhotos(prev => [...prev, ...hits]);
+        setShowBtn(page < Math.ceil(totalHits / 15));
       } catch (err) {
-        this.setState({ error: err.message });
+        setError(err.message);
       } finally {
-        this.setState({ isLoading: false });
+        setIsLoading(false);
       }
-    }
-  }
+    };
+    fetchImages();
+  }, [queri, page]);
 
-  handleSubmit = queri => {
-    this.setState({
-      queri,
-      page: 1,
-      photos: [],
-      showBtn: false,
-      isEmpty: false,
-      error: '',
-      isLoading: false,
-      imageURL: '',
-    });
+  const handleSubmit = queri => {
+    setQueri(queri);
+    setPage(1);
+    setPhotos([]);
+    setShowBtn(false);
+    setIsEmpty(false);
+    setError('');
+    setIsLoading(false);
+    setImageURL('');
   };
 
-  handleClick = () => {
-    this.setState(prev => ({
-      page: prev.page + 1,
-    }));
+  const handleClick = () => {
+    setPage(prev => prev + 1);
   };
 
-  onModal = imageURL => {
-    this.setState({ imageURL });
+  const onModal = url => {
+    setImageURL(url);
   };
 
-  render() {
-    const { photos, showBtn, isLoading, imageURL } = this.state;
-    return (
-      <div className="app">
-        <Searchbar submit={this.handleSubmit} />
-        {Boolean(photos.length) && (
-          <ImageGallery>
-            <ImageGalleryItem photos={photos} click={this.onModal} />
-          </ImageGallery>
-        )}
-        {showBtn && <Button click={this.handleClick} />}
-        {isLoading && <Loader />}
-        {imageURL && <Modal url={imageURL} offModal={this.onModal} />}
-      </div>
-    );
-  }
-}
+  return (
+    <div className="app">
+      <Searchbar submit={handleSubmit} />
+      {photos.length > 0 && (
+        <ImageGallery>
+          <ImageGalleryItem photos={photos} click={onModal} />
+        </ImageGallery>
+      )}
+      {showBtn && <Button click={handleClick} />}
+      {isLoading && <Loader />}
+      {imageURL && <Modal url={imageURL} offModal={onModal} />}
+    </div>
+  );
+};
