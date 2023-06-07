@@ -8,16 +8,6 @@ import { Modal } from './Modal';
 import { getImages } from 'service/imageAPI';
 
 export const App = () => {
-  // state = {
-  //   queri: '',
-  //   page: 1,
-  //   photos: [],
-  //   showBtn: false,
-  //   isEmpty: false,
-  //   error: '',
-  //   isLoading: false,
-  //   imageURL: '',
-  // };
   const [queri, setQueri] = useState('');
   const [page, setPage] = useState(1);
   const [photos, setPhotos] = useState([]);
@@ -27,25 +17,6 @@ export const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [imageURL, setImageURL] = useState('');
 
-  // async componentDidUpdate(_, prevState) {
-  //   const { queri, page } = this.state;
-  //   if (prevState.queri !== queri || prevState.page !== page) {
-  //     this.setState({ isLoading: true });
-  //     try {
-  //       const { hits, totalHits } = await getImages(queri, page);
-
-  //       this.setState(prev => ({
-  //         photos: [...prev.photos, ...hits],
-  //         showBtn: page < Math.ceil(totalHits / 15),
-  //       }));
-  //     } catch (err) {
-  //       this.setState({ error: err.message });
-  //     } finally {
-  //       this.setState({ isLoading: false });
-  //     }
-  //   }
-  // }
-
   useEffect(() => {
     if (!queri) {
       return;
@@ -53,7 +24,6 @@ export const App = () => {
     setIsLoading(true);
     const fetchImages = async () => {
       try {
-        // const apiPhotos = await getImages(queri, page);
         const { hits, totalHits } = await getImages(queri, page);
 
         setPhotos(prev => [...prev, ...hits]);

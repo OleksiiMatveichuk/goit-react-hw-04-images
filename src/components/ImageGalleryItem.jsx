@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 
 export const ImageGalleryItem = ({ photos, click }) => {
-  console.log('photos :>> ', photos);
   return (
     <>
       {photos.map(el => (
