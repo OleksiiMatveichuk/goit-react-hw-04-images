@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 export const Modal = ({ url, offModal }) => {
   useEffect(() => {
     document.addEventListener('keydown', closeEsc);
-    console.log('escClose :>> ', 'escClose');
 
     return () => {
       document.removeEventListener('keydown', closeEsc);
@@ -13,7 +12,6 @@ export const Modal = ({ url, offModal }) => {
 
   const closeEsc = e => {
     if (e.key === 'Escape') {
-      console.log('Escape');
       offModal('');
     }
   };
